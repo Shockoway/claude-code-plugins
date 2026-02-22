@@ -1,0 +1,17 @@
+{
+  "description": "Auto-rebuild KB index after writes to kb/",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/kb-rebuild.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

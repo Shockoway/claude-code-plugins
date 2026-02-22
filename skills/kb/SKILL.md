@@ -42,7 +42,7 @@ For real trade-offs:
   /kb adr new <title>  →  mark accepted after decision is made
 
 For contract changes to a module:
-  /kb reference show <id>  →  edit doc  →  /kb index rebuild
+  /kb reference show <id>  →  edit doc  (index and graph rebuild automatically)
 
 When asked to set up KB for an existing project:
   1. If kb/ doesn't exist: /kb init
@@ -115,7 +115,7 @@ Which glossary terms does this node use? Who else uses them?
 
 ### /kb index rebuild
 Rebuild `kb/index.jsonl` (cache) and `kb/graph.json` (derived).
-Run after creating or editing any KB documents.
+Runs automatically after any edit to kb/ files. Use manually only if index gets out of sync.
 
 ### /kb lint
 Validate KB structure, frontmatter schemas, git hygiene.
