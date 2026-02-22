@@ -1,0 +1,13 @@
+{
+  "name": "shockoway-knowledge-base",
+  "owner": {
+    "name": "Shockoway"
+  },
+  "plugins": [
+    {
+      "name": "shockoway-knowledge-base",
+      "source": ".",
+      "description": "Namespaced knowledge base for long-running projects — tasks, ADRs, module references, knowledge graph."
+    }
+  ]
+}
