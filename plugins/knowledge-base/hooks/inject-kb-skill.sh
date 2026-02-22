@@ -13,12 +13,19 @@ fi
 # Read skill content and escape for JSON
 skill_content=$(cat "$skill_path")
 
+# Add skill invocation hint at the beginning
+skill_with_hint="**⚠️ For agents: The KB skill is registered as \`kb\` (not by plugin name). Use \`Skill(kb)\` to invoke.**
+
+---
+
+$skill_content"
+
 # Format as JSON hook output with additionalContext
 cat <<EOF
 {
   "hookSpecificOutput": {
     "hookEventName": "SubagentStart",
-    "additionalContext": $(printf '%s' "$skill_content" | jq -Rs .)
+    "additionalContext": $(printf '%s' "$skill_with_hint" | jq -Rs .)
   }
 }
 EOF

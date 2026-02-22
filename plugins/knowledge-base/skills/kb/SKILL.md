@@ -8,6 +8,8 @@ context: default
 
 # KB Skill
 
+**For agents: Use `Skill(kb)` to invoke this skill.**
+
 Namespace-based knowledge base management for long-running projects.
 
 ## Philosophy
