@@ -4,9 +4,11 @@ type: ref
 name: "<name>"
 owner: "@you"
 last_reviewed: YYYY-MM-DD
+refs:
+  uses_term: []
 ---
 
-# Module: <name>
+# <name>
 
 ## Purpose
 

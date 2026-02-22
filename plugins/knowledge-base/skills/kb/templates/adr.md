@@ -4,10 +4,11 @@ type: adr
 title: "<title>"
 status: proposed
 date: YYYY-MM-DD
-supersedes: null
-affects: []
-constrained_by: []
-uses_term: []
+refs:
+  affects: []
+  supersedes: null
+  constrained_by: []
+  uses_term: []
 ---
 
 # Context

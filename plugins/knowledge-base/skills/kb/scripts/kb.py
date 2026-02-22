@@ -95,6 +95,7 @@ def update_frontmatter_field(file_path: Path, field: str, value: str) -> bool:
         return False
 
     in_fm = False
+    in_refs = False
     found = False
     new_lines = []
     for i, line in enumerate(lines):
@@ -106,16 +107,27 @@ def update_frontmatter_field(file_path: Path, field: str, value: str) -> bool:
                 continue
             else:
                 in_fm = False
+                in_refs = False
                 new_lines.append(line)
                 continue
-        if in_fm and not line.startswith(" ") and not line.startswith("\t"):
-            key, sep, _ = stripped.partition(":")
-            if key.strip() == field and sep:
-                # Preserve indentation; write updated value
-                indent = len(line) - len(line.lstrip())
-                new_lines.append(" " * indent + f"{field}: {value}\n")
-                found = True
-                continue
+        if in_fm:
+            if not line.startswith(" ") and not line.startswith("\t"):
+                in_refs = False
+                key, sep, _ = stripped.partition(":")
+                if key.strip() == field and sep:
+                    indent = len(line) - len(line.lstrip())
+                    new_lines.append(" " * indent + f"{field}: {value}\n")
+                    found = True
+                    continue
+                if key.strip() == "refs" and sep:
+                    in_refs = True
+            elif in_refs:
+                key, sep, _ = stripped.strip().partition(":")
+                if key.strip() == field and sep:
+                    indent = len(line) - len(line.lstrip())
+                    new_lines.append(" " * indent + f"{field}: {value}\n")
+                    found = True
+                    continue
         new_lines.append(line)
 
     if found:
@@ -357,7 +369,7 @@ def _reference_new(args: list) -> int:
         print(f"⚠ Module reference already exists: {file_path.relative_to(Path.cwd())}")
         return 0
 
-    content = _render_template("module.md", {
+    content = _render_template("ref.md", {
         "ref-<slug>": f"ref-{slug}",
         "<slug>": slug,
         '"<name>"': f'"{name}"',

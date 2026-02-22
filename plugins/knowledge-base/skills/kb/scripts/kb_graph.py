@@ -8,7 +8,7 @@ graph.json schema:
     "edges": [{"from": "...", "relation": "...", "to": "..."}]
   }
 
-Node types: task, adr, module, term
+Node types: task, adr, ref, term
 Edge relations: touches, motivated_by, affects, supersedes, uses_term, constrained_by
 
 Run:
@@ -89,33 +89,18 @@ def build_graph(kb_dir: Path) -> dict:
     for term in extract_glossary_terms(kb_dir):
         nodes[term["id"]] = term
 
-    # Build edges from task refs
+    # Build edges from refs block (all types)
     for e in entries:
-        if e["type"] == "task":
-            refs = e.get("refs", {})
-            for target in refs.get("touches", []) or []:
-                if target:
-                    edges.append({"from": e["id"], "relation": "touches", "to": target})
-            for target in refs.get("motivated_by", []) or []:
-                if target:
-                    edges.append({"from": e["id"], "relation": "motivated_by", "to": target})
-            for target in refs.get("uses_term", []) or []:
-                if target:
-                    edges.append({"from": e["id"], "relation": "uses_term", "to": target})
-
-        elif e["type"] == "adr":
-            for target in e.get("affects", []) or []:
-                if target:
-                    edges.append({"from": e["id"], "relation": "affects", "to": target})
-            supersedes = e.get("supersedes")
-            if supersedes:
-                edges.append({"from": e["id"], "relation": "supersedes", "to": supersedes})
-            for target in e.get("constrained_by", []) or []:
-                if target:
-                    edges.append({"from": e["id"], "relation": "constrained_by", "to": target})
-            for target in e.get("uses_term", []) or []:
-                if target:
-                    edges.append({"from": e["id"], "relation": "uses_term", "to": target})
+        refs = e.get("refs") or {}
+        if not isinstance(refs, dict):
+            continue
+        for relation, targets in refs.items():
+            if isinstance(targets, list):
+                for target in targets:
+                    if target:
+                        edges.append({"from": e["id"], "relation": relation, "to": target})
+            elif targets:
+                edges.append({"from": e["id"], "relation": relation, "to": targets})
 
     return {"nodes": list(nodes.values()), "edges": edges}
 

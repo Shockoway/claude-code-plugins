@@ -1,6 +1,6 @@
 ---
 name: kb
-description: Maintain the repo-local KB in kb/. Manage tasks, module references, and ADRs; query the knowledge graph; run lint/index rebuild. Use at the start of significant work, when making architecture decisions, or when you need to know what to work on next.
+description: Maintain the repo-local KB in kb/. Manage tasks, reference docs, and ADRs; query the knowledge graph; run lint/index rebuild. Use at the start of significant work, when making architecture decisions, or when you need to know what to work on next.
 user-invocable: true
 allowed-tools: Bash, Write, Edit
 context: default
@@ -40,8 +40,8 @@ For multi-session work:
 For real trade-offs:
   /kb adr new <title>  →  mark accepted after decision is made
 
-For contract changes to a module:
-  /kb reference show <id>  →  edit doc  (index and graph rebuild automatically)
+For contract changes to a component:
+  /kb reference show <id>  →  edit doc
 
 When asked to set up KB for an existing project:
   1. If kb/ doesn't exist: /kb init
@@ -59,7 +59,6 @@ When asked to set up KB for an existing project:
 
 - This skill may ONLY create/edit files under `kb/`.
 - Never modify product code with this skill.
-- All commands are user-invoked; Claude cannot trigger them autonomously.
 - Scripts use Python 3.6+ standard library only.
 
 ## Execution
@@ -101,7 +100,7 @@ Update a frontmatter field. Example: `/kb task set TASK-my-task status=in-progre
 Print the full task document.
 
 ### /kb reference new <name>
-Create a module reference doc. Example: `/kb reference new auth module`
+Create a reference doc. Example: `/kb reference new auth module`
 Creates: `kb/reference/ref-auth-module.md`
 
 ### /kb reference select / set / show
@@ -121,7 +120,7 @@ Print a strategic document.
 What does this node touch or affect? BFS outward.
 
 ### /kb graph why <id>
-Which ADRs explain why this module is shaped this way?
+Which ADRs explain why this component is shaped this way?
 
 ### /kb graph trace <adr-id>
 Walk the supersedes chain both directions.
@@ -131,7 +130,7 @@ Which glossary terms does this node use? Who else uses them?
 
 ### /kb index rebuild
 Rebuild `kb/index.jsonl` (cache) and `kb/graph.json` (derived).
-Runs automatically after any edit to kb/ files. Use manually only if index gets out of sync.
+Index rebuilds automatically at session start/end. Use manually if index gets out of sync.
 
 ### /kb lint
 Validate KB structure, frontmatter schemas, git hygiene.
@@ -180,10 +179,11 @@ type: adr
 title: "<title>"
 status: proposed         # proposed | accepted | rejected | superseded
 date: YYYY-MM-DD
-supersedes: null
-affects: []              # ref-* ids
-constrained_by: []       # charter section names
-uses_term: []
+refs:
+  affects: []            # ref-* ids
+  supersedes: null
+  constrained_by: []     # charter section names
+  uses_term: []
 ```
 
 ### ref-*.md
@@ -193,6 +193,8 @@ type: ref
 name: "<name>"
 owner: "@you"
 last_reviewed: YYYY-MM-DD
+refs:
+  uses_term: []
 ```
 
 ## Old → New command map

@@ -210,14 +210,20 @@ def _build_entry(fm: dict, path: Path, kb_dir: Path, expected_type: str) -> dict
     elif expected_type == "adr":
         entry["status"] = fm.get("status", "proposed")
         entry["date"] = fm.get("date", "")
-        entry["affects"] = fm.get("affects") or []
-        entry["supersedes"] = fm.get("supersedes")
-        entry["constrained_by"] = fm.get("constrained_by") or []
-        entry["uses_term"] = fm.get("uses_term") or []
+        refs = fm.get("refs", {})
+        refs = refs if isinstance(refs, dict) else {}
+        entry["refs"] = {
+            "affects": refs.get("affects") or [],
+            "supersedes": refs.get("supersedes"),
+            "constrained_by": refs.get("constrained_by") or [],
+            "uses_term": refs.get("uses_term") or [],
+        }
 
     elif expected_type == "ref":
         entry["owner"] = fm.get("owner", "")
         entry["last_reviewed"] = fm.get("last_reviewed", "")
+        refs = fm.get("refs", {})
+        entry["refs"] = {"uses_term": refs.get("uses_term") or [] if isinstance(refs, dict) else []}
 
     return entry
 

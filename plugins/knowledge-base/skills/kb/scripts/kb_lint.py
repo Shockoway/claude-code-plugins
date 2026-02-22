@@ -19,8 +19,8 @@ NC = '\033[0m'
 # Required fields and valid status enums per type
 REQUIRED_FIELDS = {
     "task": ["id", "type", "title", "status", "priority", "created", "updated"],
-    "adr": ["id", "type", "title", "status", "date"],
-    "ref": ["id", "type", "name", "owner", "last_reviewed"],
+    "adr": ["id", "type", "title", "status", "date", "refs"],
+    "ref": ["id", "type", "name", "owner", "last_reviewed", "refs"],
 }
 
 STATUS_ENUMS = {
