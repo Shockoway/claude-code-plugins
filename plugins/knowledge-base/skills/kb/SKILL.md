@@ -2,7 +2,6 @@
 name: kb
 description: Maintain the repo-local KB in kb/. Manage tasks, module references, and ADRs; query the knowledge graph; run lint/index rebuild. Use at the start of significant work, when making architecture decisions, or when you need to know what to work on next.
 user-invocable: true
-disable-model-invocation: true
 allowed-tools: Bash, Write, Edit
 context: default
 ---
