@@ -43,6 +43,17 @@ For real trade-offs:
 
 For contract changes to a module:
   /kb reference show <id>  →  edit doc  →  /kb index rebuild
+
+When asked to set up KB for an existing project:
+  1. If kb/ doesn't exist: /kb init
+  2. Ask: "Do you want to fill in the charter now? I'll ask one question at a time."
+  3. If yes, interview — one question at a time, wait for answer before asking next:
+     - "What problem are we solving, and who has it?"
+     - "What are the goals? (top 1–3)"
+     - "What is explicitly out of scope?"
+     - "Any hard constraints or invariants?"
+  Do NOT infer charter content from the codebase.
+  Write only what the user explicitly provides.
 ```
 
 ## Scope and safety
