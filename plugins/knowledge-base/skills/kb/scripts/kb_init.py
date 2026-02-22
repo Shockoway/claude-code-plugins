@@ -7,12 +7,13 @@ Creates:
     charter.md
     glossary.md
     roadmap.md
+    dashboard.html
     tasks/
     reference/
     decisions/
 
 Does NOT create INDEX.md (replaced by index.jsonl cache).
-Adds kb/index.jsonl and kb/graph.json to .gitignore.
+Adds kb/index.jsonl, kb/graph.json, and kb/dashboard.html to .gitignore.
 
 Run:
   python scripts/kb_init.py [kb_dir]
@@ -46,12 +47,27 @@ def _create_from_template(dest: Path, tmpl: Path, subs: dict) -> bool:
     return True
 
 
+def copy_dashboard(kb_dir: Path, templates_dir: Path) -> None:
+    """Copy dashboard.html template to kb/. No substitutions."""
+    dest = kb_dir / "dashboard.html"
+    tmpl = templates_dir / "dashboard.html"
+    if dest.exists():
+        print(f"ℹ dashboard.html already exists — skipping")
+        return
+    if not tmpl.exists():
+        print(f"⚠ dashboard.html template not found in {templates_dir}")
+        return
+    content = tmpl.read_text(encoding="utf-8")
+    dest.write_text(content, encoding="utf-8")
+    print("✓ Created dashboard.html")
+
+
 def update_gitignore(kb_dir: Path) -> None:
-    """Add index.jsonl and graph.json to .gitignore (project root level)."""
+    """Add index.jsonl, graph.json, and dashboard.html to .gitignore (project root level)."""
     root = kb_dir.parent
     gitignore = root / ".gitignore"
 
-    entries_to_add = ["kb/index.jsonl", "kb/graph.json"]
+    entries_to_add = ["kb/index.jsonl", "kb/graph.json", "kb/dashboard.html"]
 
     if gitignore.exists():
         existing = gitignore.read_text(encoding="utf-8")
@@ -90,6 +106,7 @@ def main(argv=None):
     _create_from_template(kb_dir / "glossary.md", templates_dir / "glossary.md", subs)
     _create_from_template(kb_dir / "roadmap.md",  templates_dir / "roadmap.md",  subs)
 
+    copy_dashboard(kb_dir, templates_dir)
     update_gitignore(kb_dir)
 
     print()
@@ -100,6 +117,7 @@ def main(argv=None):
     print("  2. Edit kb/glossary.md — add canonical terms")
     print("  3. /kb task new <title> — create your first task")
     print("  4. /kb index rebuild — build index.jsonl + graph.json")
+    print("  5. Open kb/dashboard.html in browser to view the dashboard")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 {
   "name": "shockoway-knowledge-base",
   "description": "Namespaced knowledge base for long-running projects — tasks, ADRs, module references, knowledge graph.",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "author": {
     "name": "Shockoway"
   }

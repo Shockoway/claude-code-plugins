@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KB Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f1419;
+            color: #e8eef2;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 20px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .stat-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #58a6ff;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .section {
+            margin-bottom: 50px;
+        }
+        .section h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #f0883e;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .kanban {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .kanban-column {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .kanban-column h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #8b949e;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #30363d;
+        }
+        .task-card {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid #58a6ff;
+        }
+        .task-card:hover {
+            border-color: #58a6ff;
+            background: #161b22;
+        }
+        .task-id {
+            font-size: 11px;
+            color: #8b949e;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .task-title {
+            font-size: 13px;
+            color: #e8eef2;
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+        .task-priority {
+            display: inline-block;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .priority-critical { background: #da3633; color: white; }
+        .priority-high { background: #f85149; color: white; }
+        .priority-medium { background: #d29922; color: white; }
+        .priority-low { background: #58a6ff; color: black; }
+        .items-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        .item-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 15px;
+            transition: all 0.2s;
+        }
+        .item-card:hover {
+            border-color: #58a6ff;
+            background: #0d1117;
+        }
+        .item-id {
+            font-size: 11px;
+            color: #58a6ff;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .item-title {
+            font-size: 14px;
+            color: #e8eef2;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .item-meta {
+            font-size: 12px;
+            color: #8b949e;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            background: #30363d;
+            color: #8b949e;
+            margin-right: 5px;
+        }
+        .graph-container {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 400px;
+            overflow-x: auto;
+        }
+        .graph-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .graph-table th {
+            background: #0d1117;
+            color: #58a6ff;
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #30363d;
+            font-weight: bold;
+        }
+        .graph-table td {
+            padding: 10px;
+            border-bottom: 1px solid #30363d;
+        }
+        .graph-table tr:hover {
+            background: #0d1117;
+        }
+        .loading {
+            text-align: center;
+            color: #8b949e;
+            padding: 40px;
+        }
+        .error {
+            background: #161b22;
+            border: 1px solid #da3633;
+            border-radius: 6px;
+            padding: 15px;
+            color: #f85149;
+            margin-bottom: 20px;
+        }
+        .no-data {
+            color: #8b949e;
+            text-align: center;
+            padding: 30px;
+            background: #161b22;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 KB Dashboard</h1>
+            <p style="color: #8b949e; margin-top: 5px;">Knowledge Base Overview</p>
+            <div class="stats" id="stats">
+                <div class="loading">Loading data...</div>
+            </div>
+        </div>
+
+        <!-- Tasks Kanban -->
+        <div class="section">
+            <h2>📋 Tasks</h2>
+            <div class="kanban" id="kanban">
+                <div class="loading">Loading tasks...</div>
+            </div>
+        </div>
+
+        <!-- References -->
+        <div class="section">
+            <h2>📚 References</h2>
+            <div class="items-list" id="references">
+                <div class="loading">Loading references...</div>
+            </div>
+        </div>
+
+        <!-- ADRs -->
+        <div class="section">
+            <h2>⚙️ Architecture Decisions</h2>
+            <div class="items-list" id="adrs">
+                <div class="loading">Loading ADRs...</div>
+            </div>
+        </div>
+
+        <!-- Graph -->
+        <div class="section">
+            <h2>🔗 Dependencies Graph</h2>
+            <div class="graph-container" id="graph">
+                <div class="loading">Loading graph...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let indexData = [];
+        let graphData = null;
+
+        async function loadData() {
+            try {
+                // Load index.jsonl
+                const indexRes = await fetch('index.jsonl');
+                if (!indexRes.ok) throw new Error('index.jsonl not found');
+                const indexText = await indexRes.text();
+                indexData = indexText
+                    .trim()
+                    .split('\n')
+                    .filter(line => line.trim())
+                    .map(line => JSON.parse(line));
+
+                // Load graph.json
+                const graphRes = await fetch('graph.json');
+                if (graphRes.ok) {
+                    graphData = await graphRes.json();
+                }
+
+                render();
+            } catch (err) {
+                document.querySelector('.container').innerHTML = `
+                    <div class="error">
+                        <strong>Error loading KB data:</strong> ${err.message}<br>
+                        <small>Make sure you've run: <code>/kb index rebuild</code></small>
+                    </div>
+                `;
+            }
+        }
+
+        function render() {
+            renderStats();
+            renderKanban();
+            renderReferences();
+            renderADRs();
+            renderGraph();
+        }
+
+        function renderStats() {
+            const tasks = indexData.filter(e => e.type === 'task');
+            const done = tasks.filter(e => e.status === 'done').length;
+            const inProgress = tasks.filter(e => e.status === 'in-progress').length;
+            const planned = tasks.filter(e => e.status === 'planned').length;
+            const refs = indexData.filter(e => e.type === 'ref').length;
+            const adrs = indexData.filter(e => e.type === 'adr').length;
+
+            document.getElementById('stats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${tasks.length}</div>
+                    <div class="stat-label">Tasks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${planned}</div>
+                    <div class="stat-label">Planned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${inProgress}</div>
+                    <div class="stat-label">In Progress</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${done}</div>
+                    <div class="stat-label">Done</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${refs}</div>
+                    <div class="stat-label">References</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${adrs}</div>
+                    <div class="stat-label">ADRs</div>
+                </div>
+            `;
+        }
+
+        function renderKanban() {
+            const tasks = indexData.filter(e => e.type === 'task');
+            const statuses = ['planned', 'in-progress', 'done', 'cancelled'];
+            const statusLabels = {
+                'planned': '📌 Planned',
+                'in-progress': '⚡ In Progress',
+                'done': '✅ Done',
+                'cancelled': '❌ Cancelled'
+            };
+
+            let html = '';
+            for (const status of statuses) {
+                const statusTasks = tasks.filter(t => t.status === status);
+                html += `<div class="kanban-column">
+                    <h3>${statusLabels[status]} (${statusTasks.length})</h3>`;
+
+                if (statusTasks.length === 0) {
+                    html += '<div class="no-data">No tasks</div>';
+                } else {
+                    for (const task of statusTasks) {
+                        const priorityClass = `priority-${task.priority || 'medium'}`;
+                        html += `
+                            <div class="task-card">
+                                <div class="task-id">${task.id}</div>
+                                <div class="task-title">${task.title || 'Untitled'}</div>
+                                <span class="task-priority ${priorityClass}">${task.priority || 'medium'}</span>
+                            </div>
+                        `;
+                    }
+                }
+                html += '</div>';
+            }
+            document.getElementById('kanban').innerHTML = html;
+        }
+
+        function renderReferences() {
+            const refs = indexData.filter(e => e.type === 'ref');
+            if (refs.length === 0) {
+                document.getElementById('references').innerHTML = '<div class="no-data">No references</div>';
+                return;
+            }
+
+            let html = '';
+            for (const ref of refs) {
+                html += `
+                    <div class="item-card">
+                        <div class="item-id">${ref.id}</div>
+                        <div class="item-title">${ref.name || 'Untitled'}</div>
+                        <div class="item-meta">
+                            <div>Owner: ${ref.owner || 'N/A'}</div>
+                            <div>Last reviewed: ${ref.last_reviewed || 'N/A'}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            document.getElementById('references').innerHTML = html;
+        }
+
+        function renderADRs() {
+            const adrs = indexData.filter(e => e.type === 'adr');
+            if (adrs.length === 0) {
+                document.getElementById('adrs').innerHTML = '<div class="no-data">No ADRs</div>';
+                return;
+            }
+
+            let html = '';
+            for (const adr of adrs) {
+                const statusColor = adr.status === 'accepted' ? '#3fb950' :
+                                   adr.status === 'proposed' ? '#58a6ff' :
+                                   adr.status === 'rejected' ? '#da3633' : '#8b949e';
+                html += `
+                    <div class="item-card">
+                        <div class="item-id">${adr.id}</div>
+                        <div class="item-title">${adr.title || 'Untitled'}</div>
+                        <div class="item-meta">
+                            <span class="status-badge" style="background: ${statusColor}; color: white;">
+                                ${adr.status || 'unknown'}
+                            </span>
+                            <div style="margin-top: 8px;">Date: ${adr.date || 'N/A'}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            document.getElementById('adrs').innerHTML = html;
+        }
+
+        function renderGraph() {
+            if (!graphData || !graphData.edges || graphData.edges.length === 0) {
+                document.getElementById('graph').innerHTML = '<div class="no-data">No dependencies</div>';
+                return;
+            }
+
+            let html = `
+                <table class="graph-table">
+                    <thead>
+                        <tr>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Relation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            for (const edge of graphData.edges) {
+                html += `
+                    <tr>
+                        <td><code style="color: #58a6ff;">${edge.from}</code></td>
+                        <td><code style="color: #3fb950;">${edge.to}</code></td>
+                        <td><code style="color: #f0883e;">${edge.relation}</code></td>
+                    </tr>
+                `;
+            }
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('graph').innerHTML = html;
+        }
+
+        // Load data when page loads
+        loadData();
+    </script>
+</body>
+</html>
