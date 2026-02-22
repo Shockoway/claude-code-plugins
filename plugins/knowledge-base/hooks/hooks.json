@@ -1,9 +1,21 @@
 {
-  "description": "Auto-rebuild KB index after writes to kb/",
+  "description": "Rebuild KB index at session start and end",
   "hooks": {
-    "PostToolUse": [
+    "SessionStart": [
       {
-        "matcher": "Write|Edit",
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/kb-rebuild.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "",
         "hooks": [
           {
             "type": "command",

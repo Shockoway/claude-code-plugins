@@ -3,7 +3,7 @@ name: kb
 description: Maintain the repo-local KB in kb/. Manage tasks, module references, and ADRs; query the knowledge graph; run lint/index rebuild. Use at the start of significant work, when making architecture decisions, or when you need to know what to work on next.
 user-invocable: true
 disable-model-invocation: true
-allowed-tools: Read, Grep, Glob, Edit, Write, Bash
+allowed-tools: Bash, Write, Edit
 context: default
 ---
 
@@ -63,13 +63,30 @@ When asked to set up KB for an existing project:
 - All commands are user-invoked; Claude cannot trigger them autonomously.
 - Scripts use Python 3.6+ standard library only.
 
+## Execution
+
+Two rules, no exceptions:
+
+1. **Structure and metadata → CLI only.** Creating files, updating frontmatter fields, querying, rebuilding index — always via the shell wrapper. Never create KB files with Write, never patch frontmatter with Edit.
+2. **Document content → Write/Edit.** After CLI creates a stub, fill in the markdown body with Write or Edit.
+
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" <command> [args...]
+```
+
+Examples:
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" init
+bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" task select --where status=planned --sort priority --limit 10
+bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" adr new "use postgres for storage"
+```
+
+Show CLI output to the user as-is.
+
 ## Commands
 
 ### /kb init
 Bootstrap KB structure. Run once when starting a new KB.
-
-Creates: `kb/charter.md`, `kb/glossary.md`, `kb/roadmap.md`, subdirs `tasks/`, `reference/`, `decisions/`.
-Adds `kb/index.jsonl` and `kb/graph.json` to `.gitignore`.
 
 ### /kb task new <title>
 Create a task. Example: `/kb task new implement auth middleware`
