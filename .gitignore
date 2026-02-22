@@ -1,2 +1,4 @@
 kb/index.jsonl
 kb/graph.json
+__pycache__/
+*.pyc
