@@ -14,7 +14,7 @@ fi
 skill_content=$(cat "$skill_path")
 
 # Add skill invocation hint at the beginning
-skill_with_hint="**⚠️ For agents: The KB skill is registered as \`kb\` (not by plugin name). Use \`Skill(kb)\` to invoke.**
+skill_with_hint="**⚠️ For agents: Use \`Skill(shockoway-knowledge-base:kb)\` to invoke the KB skill.**
 
 ---
 
