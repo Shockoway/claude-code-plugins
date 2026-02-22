@@ -1,5 +1,5 @@
 {
-  "description": "Rebuild KB index at session start and end",
+  "description": "KB plugin: rebuild index at session start/end, inject skill into subagents",
   "hooks": {
     "SessionStart": [
       {
@@ -21,6 +21,18 @@
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/kb-rebuild.sh",
             "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/inject-kb-skill.sh",
+            "timeout": 5
           }
         ]
       }
