@@ -8,7 +8,7 @@ context: default
 
 # KB Skill
 
-**For agents: Use `Skill(kb)` to invoke this skill.**
+**For agents: Use `Skill(shockoway-knowledge-base:kb)` to invoke this skill.**
 
 Namespace-based knowledge base management for long-running projects.
 
