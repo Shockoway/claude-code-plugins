@@ -97,7 +97,7 @@ class KBLinter:
     # ── Frontmatter validation ──────────────────────────────────────────────
 
     def _parse_frontmatter(self, content: str) -> dict:
-        """Minimal frontmatter parser — only used for linting."""
+        """Parse YAML frontmatter, handling nested structures like refs:."""
         lines = content.splitlines()
         if not lines or lines[0].strip() != "---":
             return {}
@@ -108,11 +108,53 @@ class KBLinter:
                 break
             fm_lines.append(lines[i])
             i += 1
+
         result = {}
-        for line in fm_lines:
-            if ":" in line and not line.startswith(" "):
-                key, _, val = line.partition(":")
-                result[key.strip()] = val.strip()
+        i = 0
+        while i < len(fm_lines):
+            line = fm_lines[i]
+
+            # Skip empty lines
+            if not line.strip():
+                i += 1
+                continue
+
+            # Only process top-level keys (no leading spaces/tabs)
+            if line.startswith(" ") or line.startswith("\t"):
+                i += 1
+                continue
+
+            # Parse key: value
+            if ":" not in line:
+                i += 1
+                continue
+
+            key, _, val = line.partition(":")
+            key = key.strip()
+            val = val.strip()
+
+            # If this is a block (value is empty but has indented children),
+            # mark it as non-empty so validation passes
+            if not val:
+                j = i + 1
+                has_children = False
+                while j < len(fm_lines):
+                    next_line = fm_lines[j]
+                    if not next_line.strip():
+                        j += 1
+                        continue
+                    if next_line.startswith(" ") or next_line.startswith("\t"):
+                        has_children = True
+                        break
+                    else:
+                        break
+
+                if has_children:
+                    val = "<block>"  # Non-empty marker for validation
+
+            result[key] = val
+            i += 1
+
         return result
 
     def check_document_schemas(self) -> None:
