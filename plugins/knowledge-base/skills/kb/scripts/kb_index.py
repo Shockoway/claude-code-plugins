@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-kb_index: Generate kb/index.jsonl from all task/adr/module frontmatter.
+kb_index: Generate kb/index.jsonl from all task/adr/ref frontmatter.
 
 index.jsonl is a rebuild-able cache — safe to delete and regenerate anytime.
 Never commit it to git (add kb/index.jsonl to .gitignore).
@@ -147,13 +147,13 @@ def _parse_inline_or_scalar(s: str):
 
 
 def scan_kb(kb_dir: Path) -> list:
-    """Scan KB for task/adr/module files and return list of index entries."""
+    """Scan KB for task/adr/ref files and return list of index entries."""
     entries = []
 
     patterns = [
         ("tasks", "task-*.md", "task"),
         ("decisions", "adr-*.md", "adr"),
-        ("reference", "module-*.md", "module"),
+        ("reference", "ref-*.md", "ref"),
     ]
 
     for subdir, glob_pat, expected_type in patterns:
@@ -181,7 +181,7 @@ def scan_kb(kb_dir: Path) -> list:
 
 def _build_entry(fm: dict, path: Path, kb_dir: Path, expected_type: str) -> dict:
     """Build an index entry from frontmatter + path."""
-    doc_id = fm.get("id") or fm.get("module_name") or path.stem
+    doc_id = fm.get("id") or path.stem
     doc_type = fm.get("type", expected_type)
     title = fm.get("title") or fm.get("name") or doc_id
 
@@ -215,8 +215,7 @@ def _build_entry(fm: dict, path: Path, kb_dir: Path, expected_type: str) -> dict
         entry["constrained_by"] = fm.get("constrained_by") or []
         entry["uses_term"] = fm.get("uses_term") or []
 
-    elif expected_type == "module":
-        entry["status"] = fm.get("status", "active")
+    elif expected_type == "ref":
         entry["owner"] = fm.get("owner", "")
         entry["last_reviewed"] = fm.get("last_reviewed", "")
 

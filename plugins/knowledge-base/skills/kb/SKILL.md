@@ -16,7 +16,7 @@ Namespace-based knowledge base management for long-running projects.
 Three questions drive all KB work:
 1. **Is this in scope?** → `/kb doc open charter`
 2. **What's the canonical name?** → `/kb doc open glossary`
-3. **Why is it shaped this way?** → `/kb graph why <module-id>`
+3. **Why is it shaped this way?** → `/kb graph why <ref-id>`
 
 Two laws:
 - **Law 1 (charter):** Every invariant lives in `kb/charter.md`. If it's not there, it's not an invariant.
@@ -33,7 +33,7 @@ For "what should I work on next?":
   /kb task select --where status=planned --sort priority
 
 For "why is X shaped this way?":
-  /kb graph why <module-id>  →  /kb graph trace <adr-id>
+  /kb graph why <ref-id>  →  /kb graph trace <adr-id>
 
 For multi-session work:
   /kb task new <title>  →  update ## Next steps at each stop
@@ -103,7 +103,7 @@ Print the full task document.
 
 ### /kb reference new <name>
 Create a module reference doc. Example: `/kb reference new auth module`
-Creates: `kb/reference/module-auth-module.md`
+Creates: `kb/reference/ref-auth-module.md`
 
 ### /kb reference select / set / show
 Same verb pattern as task.
@@ -152,7 +152,7 @@ kb/
   tasks/
     task-*.md
   reference/
-    module-*.md
+    ref-*.md
   decisions/
     adr-*.md
 ```
@@ -167,7 +167,7 @@ title: "<title>"
 status: planned          # planned | in-progress | done | cancelled
 priority: medium         # critical | high | medium | low
 refs:
-  touches: []            # module-* ids
+  touches: []            # ref-* ids
   motivated_by: []       # adr-* ids
   uses_term: []          # glossary term slugs
 created: YYYY-MM-DD
@@ -182,17 +182,16 @@ title: "<title>"
 status: proposed         # proposed | accepted | rejected | superseded
 date: YYYY-MM-DD
 supersedes: null
-affects: []              # module-* ids
+affects: []              # ref-* ids
 constrained_by: []       # charter section names
 uses_term: []
 ```
 
-### module-*.md
+### ref-*.md
 ```yaml
-id: module-<slug>
-type: module
+id: ref-<slug>
+type: ref
 name: "<name>"
-status: active           # active | deprecated | archived
 owner: "@you"
 last_reviewed: YYYY-MM-DD
 ```

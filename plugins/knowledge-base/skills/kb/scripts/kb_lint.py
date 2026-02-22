@@ -20,13 +20,12 @@ NC = '\033[0m'
 REQUIRED_FIELDS = {
     "task": ["id", "type", "title", "status", "priority", "created", "updated"],
     "adr": ["id", "type", "title", "status", "date"],
-    "module": ["id", "type", "name", "status", "owner", "last_reviewed"],
+    "ref": ["id", "type", "name", "owner", "last_reviewed"],
 }
 
 STATUS_ENUMS = {
     "task": {"planned", "in-progress", "done", "cancelled"},
     "adr": {"proposed", "accepted", "rejected", "superseded"},
-    "module": {"active", "deprecated", "archived"},
 }
 
 
@@ -117,11 +116,11 @@ class KBLinter:
         return result
 
     def check_document_schemas(self) -> None:
-        """Validate required fields and enum values for task/adr/module files."""
+        """Validate required fields and enum values for task/adr/ref files."""
         patterns = [
             (self.kb_dir / "tasks", "task-*.md", "task"),
             (self.kb_dir / "decisions", "adr-*.md", "adr"),
-            (self.kb_dir / "reference", "module-*.md", "module"),
+            (self.kb_dir / "reference", "ref-*.md", "ref"),
         ]
         for folder, glob, doc_type in patterns:
             if not folder.exists():
@@ -158,7 +157,7 @@ class KBLinter:
         """Check file naming conventions."""
         checks = [
             (self.kb_dir / "decisions", "*.md", "adr-", ["README.md"]),
-            (self.kb_dir / "reference", "*.md", "module-", ["README.md"]),
+            (self.kb_dir / "reference", "*.md", "ref-", ["README.md"]),
             (self.kb_dir / "tasks", "*.md", "task-", ["README.md"]),
         ]
         for folder, glob, prefix, allowed_exceptions in checks:

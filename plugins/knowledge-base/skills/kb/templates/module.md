@@ -1,8 +1,7 @@
 ---
-id: module-<slug>
-type: module
+id: ref-<slug>
+type: ref
 name: "<name>"
-status: active
 owner: "@you"
 last_reviewed: YYYY-MM-DD
 ---

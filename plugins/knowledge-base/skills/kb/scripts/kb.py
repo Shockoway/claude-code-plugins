@@ -197,7 +197,7 @@ def _print_entry(entry: dict) -> None:
     elif t == "adr":
         date = entry.get("date", "")
         extra = f"  date={date}" if date else ""
-    elif t == "module":
+    elif t == "ref":
         owner = entry.get("owner", "")
         extra = f"  owner={owner}" if owner else ""
     print(f"  {eid}  [{status}]{extra}  {title}")
@@ -351,14 +351,14 @@ def _reference_new(args: list) -> int:
 
     name = " ".join(args)
     slug = _slugify(name)
-    file_path = KB_DIR / "reference" / f"module-{slug}.md"
+    file_path = KB_DIR / "reference" / f"ref-{slug}.md"
 
     if file_path.exists():
         print(f"⚠ Module reference already exists: {file_path.relative_to(Path.cwd())}")
         return 0
 
     content = _render_template("module.md", {
-        "module-<slug>": f"module-{slug}",
+        "ref-<slug>": f"ref-{slug}",
         "<slug>": slug,
         '"<name>"': f'"{name}"',
         "<name>": name,
@@ -368,7 +368,7 @@ def _reference_new(args: list) -> int:
     file_path.parent.mkdir(parents=True, exist_ok=True)
     file_path.write_text(content, encoding="utf-8")
     print(f"✓ Created: {file_path.relative_to(Path.cwd())}")
-    print(f"  id: module-{slug}")
+    print(f"  id: ref-{slug}")
     return 0
 
 
@@ -376,7 +376,7 @@ def _reference_select(args: list) -> int:
     if not _require_kb():
         return 1
     entries = _load_index()
-    modules = [e for e in entries if e.get("type") == "module"]
+    modules = [e for e in entries if e.get("type") == "ref"]
     dsl = parse_dsl(args)
     results = run_select(modules, dsl)
     if not results:
@@ -405,7 +405,7 @@ def _reference_set(args: list) -> int:
     field = field.strip()
     value = value.strip()
 
-    file_path = _find_doc_file(KB_DIR / "reference", "module-", ref_id)
+    file_path = _find_doc_file(KB_DIR / "reference", "ref-", ref_id)
     if not file_path:
         print(f"✗ Reference not found: {ref_id}")
         return 1
@@ -426,7 +426,7 @@ def _reference_show(args: list) -> int:
         return 1
 
     ref_id = args[0]
-    file_path = _find_doc_file(KB_DIR / "reference", "module-", ref_id)
+    file_path = _find_doc_file(KB_DIR / "reference", "ref-", ref_id)
     if not file_path:
         print(f"✗ Reference not found: {ref_id}")
         return 1
