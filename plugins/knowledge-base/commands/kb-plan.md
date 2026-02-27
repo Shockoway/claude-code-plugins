@@ -1,5 +1,5 @@
 ---
-description: Strategic KB planning — triage backlog, align with charter
+description: Run strategic KB planning — triage backlog, align with charter
 allowed-tools: Bash(bash:*)
 ---
 
