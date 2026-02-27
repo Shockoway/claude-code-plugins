@@ -6,19 +6,29 @@ allowed-tools: Bash(bash:*)
 
 You are about to start work on: **$ARGUMENTS**
 
-Before any planning or implementation, you MUST ask the user these three questions one at a time. Wait for the answer before asking the next. Do not skip ahead.
+Before any planning or implementation, work through the three gates below ONE AT A TIME. Send each question as a separate message. Do not ask the next gate until the user has replied to the current one.
 
 **Gate 1 — What?**
-Ask: "In one sentence, what exactly are we building or changing?"
-→ Wait for answer.
+Send this message now, then stop and wait for the user's reply:
+"In one sentence, what exactly are we building or changing?"
+
+**STOP. Do not continue until the user replies to Gate 1.**
+
+---
 
 **Gate 2 — Why?**
-Ask: "Why does this matter? Which project goal does it serve, or what user pain does it address?"
-→ Wait for answer.
+Send this message now, then stop and wait for the user's reply:
+"Why does this matter? Which project goal does it serve, or what user pain does it address?"
+
+**STOP. Do not continue until the user replies to Gate 2.**
+
+---
 
 **Gate 3 — Done looks like?**
-Ask: "What does 'done' look like? What would you check to confirm it's complete?"
-→ Wait for answer.
+Send this message now, then stop and wait for the user's reply:
+"What specific behavior, test, or artifact would prove this is done?"
+
+**STOP. Do not continue until the user replies to Gate 3.**
 
 ---
 
@@ -32,9 +42,11 @@ In-progress:
 Planned:
 !`bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" task select --where status=planned`
 
-- If a matching task exists → reference it and mark it in-progress:
-    bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" task set <id> status=in-progress
-- If no matching task exists → offer to create one:
+Show the results to the user and ask: "Do any of these match what we're working on? If yes, which one?"
+
+- If the user confirms a match → mark it in-progress using the task's actual ID:
+    bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" task set <actual-id> status=in-progress
+- If no match → offer to create a new task:
     bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" task new <title>
 
 Only after completing the above, proceed with planning.
