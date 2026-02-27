@@ -12,14 +12,14 @@ You are running the KB completion checklist. Work through each step sequentially
 
 **Step 1 — Close or update worked-on tasks**
 
-For each in-progress task listed above, ask the user one at a time:
-"Was [task title] worked on during this session?"
+Ask about the **first** in-progress task: "Was [task title] worked on during this session?"
 
-**STOP after each question. Wait for the user's reply before asking about the next task.**
+**STOP. Wait for the user's reply. Then act on it, then ask about the next task. Repeat until all tasks are covered.**
 
 - Yes, it's done →
     bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" task set <actual-id> status=done
-- Yes, but not finished → ask for a brief progress note, then edit the task file's `## Next steps` section with the update
+- Yes, but not finished → ask for a brief progress note, then find the task file at
+  `kb/tasks/task-<slug>.md` (where `<slug>` is the ID after `TASK-`), and edit its `## Next steps` section
 - Not touched → skip
 
 ---
@@ -30,7 +30,7 @@ Ask the user: "Were any non-obvious trade-offs or architectural decisions made d
 
 **STOP. Wait for the user's reply.**
 
-- Yes → create an ADR with a descriptive title and fill in the body:
+- Yes → create an ADR and fill in the body (use sections: Context, Decision, Consequences):
     bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" adr new <title>
 - No → skip
 
