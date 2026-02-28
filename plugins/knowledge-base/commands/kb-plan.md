@@ -4,16 +4,16 @@ allowed-tools: Bash(bash:*)
 ---
 
 **Charter:**
-!`bash ${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh doc open charter`
+!`bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" doc open charter`
 
 **Roadmap:**
-!`bash ${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh doc open roadmap`
+!`bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" doc open roadmap`
 
 **In-progress tasks:**
-!`bash ${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh task select --where status=in-progress`
+!`bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" task select --where status=in-progress`
 
 **Planned tasks (by priority):**
-!`bash ${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh task select --where status=planned --sort priority`
+!`bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" task select --where status=planned --sort priority`
 
 You are running a strategic KB planning session. Work through this sequentially — do not skip steps, do not write code.
 

@@ -46,7 +46,8 @@ Show the results to the user and ask: "Do any of these match what we're working 
 
 - If the user confirms a match → mark it in-progress using the task's actual ID:
     bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" task set <actual-id> status=in-progress
-- If no match → offer to create a new task:
+- If no match → create a new task, then immediately mark it in-progress:
     bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" task new <title>
+    bash "${CLAUDE_PLUGIN_ROOT}/skills/kb/scripts/kb.sh" task set TASK-<slug> status=in-progress
 
 Only after completing the above, proceed with planning.
