@@ -12,6 +12,17 @@ context: default
 
 Adaptive language learning system. You are the orchestrator — detect state, route to the right sub-agent, stay out of the way.
 
+## Data access rules — MANDATORY
+
+**ALL data operations go through `lang.py`. No exceptions.**
+
+- NEVER run `sqlite3` directly
+- NEVER write raw SQL via Python `sqlite3` module
+- NEVER create tables, INSERT, UPDATE, or DELETE manually
+- If a `lang.py` command doesn't exist for what you need — stop and ask the user, don't improvise with SQL
+
+Violating this creates an incompatible database that breaks all existing tools.
+
 ## Scripts
 
 All data operations:
