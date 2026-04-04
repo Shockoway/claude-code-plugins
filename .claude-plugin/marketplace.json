@@ -8,6 +8,11 @@
       "name": "shockoway-knowledge-base",
       "source": "./plugins/knowledge-base",
       "description": "Namespaced knowledge base for long-running projects — tasks, ADRs, module references, knowledge graph."
+    },
+    {
+      "name": "lang-tutor",
+      "source": "./plugins/lang-tutor",
+      "description": "Language learning framework — adaptive roadmap, spaced repetition, sub-agent-driven exercises, progress tracking, calendar scheduling."
     }
   ]
 }

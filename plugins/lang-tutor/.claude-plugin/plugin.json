@@ -1,0 +1,8 @@
+{
+  "name": "lang-tutor",
+  "description": "Adaptive language learning with spaced repetition, AI-generated exercises, and progress tracking.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Shockoway"
+  }
+}

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lang-Tutor Dashboard</title>
+  <style>
+    /* ── Theme tokens ── */
+    :root, [data-theme="light"] {
+      --bg:          #f6f8fa;
+      --bg-card:     #ffffff;
+      --bg-inset:    #eaeef2;
+      --border:      #d0d7de;
+      --border-soft: #eaeef2;
+      --text:        #1f2328;
+      --text-muted:  #656d76;
+      --accent:      #cf6723;
+      --blue:        #0969da;
+      --green:       #1a7f37;
+      --yellow:      #9a6700;
+      --red:         #d1242f;
+      --purple:      #8250df;
+      --badge-mastered-bg:    #dafbe1; --badge-mastered-fg:    #1a7f37;
+      --badge-proficient-bg:  #ddf4ff; --badge-proficient-fg:  #0550ae;
+      --badge-learning-bg:    #fff8c5; --badge-learning-fg:    #7d4e00;
+      --badge-ns-bg:          #eaeef2; --badge-ns-fg:          #656d76;
+      --warn-bg:     #fff8c5; --warn-border: #d4a017; --warn-fg: #7d4e00;
+      --cal-sess-bg: #0969da; --cal-sess-border: #0550ae; --cal-sess-fg: #ffffff;
+      --cal-no-bg:   #f6f8fa; --cal-no-border: #d0d7de;  --cal-no-fg: #c0c8d0;
+      --mode-block-bg: #ffebe9; --mode-block-fg: #d1242f;
+      --mode-inter-bg: #dafbe1; --mode-inter-fg: #1a7f37;
+      --toggle-icon: "☀";
+    }
+    [data-theme="dark"] {
+      --bg:          #0f1419;
+      --bg-card:     #161b22;
+      --bg-inset:    #21262d;
+      --border:      #30363d;
+      --border-soft: #21262d;
+      --text:        #e8eef2;
+      --text-muted:  #8b949e;
+      --accent:      #f0883e;
+      --blue:        #58a6ff;
+      --green:       #3fb950;
+      --yellow:      #e3b341;
+      --red:         #f85149;
+      --purple:      #a371f7;
+      --badge-mastered-bg:    #1a4731; --badge-mastered-fg:    #3fb950;
+      --badge-proficient-bg:  #1c2e4a; --badge-proficient-fg:  #58a6ff;
+      --badge-learning-bg:    #3a2d0a; --badge-learning-fg:    #e3b341;
+      --badge-ns-bg:          #21262d; --badge-ns-fg:          #8b949e;
+      --warn-bg:     #2d2a1a; --warn-border: #e3b341; --warn-fg: #e3b341;
+      --cal-sess-bg: #1f6feb; --cal-sess-border: #388bfd; --cal-sess-fg: #ffffff;
+      --cal-no-bg:   #161b22; --cal-no-border: #21262d;  --cal-no-fg: #484f58;
+      --mode-block-bg: #3a1a1a; --mode-block-fg: #f85149;
+      --mode-inter-bg: #1a3a2d; --mode-inter-fg: #3fb950;
+      --toggle-icon: "☽";
+    }
+
+    /* ── Reset ── */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+      line-height: 1.6;
+      transition: background 0.2s, color 0.2s;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    /* ── Theme toggle ── */
+    .theme-toggle {
+      position: fixed; top: 16px; right: 20px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text); border-radius: 20px;
+      padding: 4px 12px; font-size: 13px; cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      transition: background 0.2s, border-color 0.2s;
+      z-index: 100;
+    }
+    .theme-toggle:hover { border-color: var(--blue); }
+
+    /* ── Header ── */
+    .header { margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+    .header h1 { font-size: 26px; margin-bottom: 6px; }
+    .header-meta { color: var(--text-muted); font-size: 13px; }
+    .level-badge {
+      display: inline-block; padding: 3px 10px; border-radius: 4px;
+      font-size: 13px; font-weight: bold; background: var(--blue); color: #fff; margin-left: 8px;
+    }
+    .target-badge {
+      display: inline-block; padding: 3px 10px; border-radius: 4px;
+      font-size: 13px; font-weight: bold; background: var(--green); color: #fff; margin-left: 4px;
+    }
+
+    /* ── Sections ── */
+    .section { margin-bottom: 48px; }
+    .section-title {
+      font-size: 12px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--accent); margin-bottom: 16px;
+    }
+
+    /* ── Stat cards ── */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-top: 16px; }
+    .stat-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px; text-align: center;
+    }
+    .stat-number { font-size: 28px; font-weight: bold; color: var(--blue); }
+    .stat-number.green  { color: var(--green); }
+    .stat-number.yellow { color: var(--yellow); }
+    .stat-number.red    { color: var(--red); }
+    .stat-number.purple { color: var(--purple); }
+    .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+
+    /* ── Roadmap ── */
+    .milestone { margin-bottom: 24px; }
+    .milestone-title {
+      font-size: 13px; color: var(--blue); font-weight: 600; margin-bottom: 10px;
+      padding: 4px 12px; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 4px; display: inline-block;
+    }
+    .topic-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 7px 0; border-bottom: 1px solid var(--border-soft);
+    }
+    .topic-title { flex: 1; font-size: 13px; }
+    .topic-badge { font-size: 10px; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; font-weight: bold; white-space: nowrap; }
+    .badge-mastered    { background: var(--badge-mastered-bg);   color: var(--badge-mastered-fg); }
+    .badge-proficient  { background: var(--badge-proficient-bg); color: var(--badge-proficient-fg); }
+    .badge-learning    { background: var(--badge-learning-bg);   color: var(--badge-learning-fg); }
+    .badge-not_started { background: var(--badge-ns-bg);         color: var(--badge-ns-fg); }
+    .topic-bar-wrap { width: 90px; height: 6px; background: var(--bg-inset); border-radius: 3px; flex-shrink: 0; }
+    .topic-bar { height: 6px; border-radius: 3px; }
+    .bar-mastered    { background: var(--green); }
+    .bar-proficient  { background: var(--blue); }
+    .bar-learning    { background: var(--yellow); }
+    .bar-not_started { background: var(--border); }
+    .topic-pct { font-size: 11px; color: var(--text-muted); width: 32px; text-align: right; flex-shrink: 0; }
+
+    /* ── Four Strands ── */
+    .strand-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    .strand-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .strand-name { font-size: 13px; font-weight: 600; margin-bottom: 12px; text-transform: capitalize; }
+    .strand-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .strand-bar-label { font-size: 11px; color: var(--text-muted); width: 44px; flex-shrink: 0; }
+    .strand-bar-wrap { flex: 1; height: 8px; background: var(--bg-inset); border-radius: 4px; }
+    .strand-bar-fill { height: 8px; border-radius: 4px; }
+    .strand-bar-fill.actual { background: var(--blue); }
+    .strand-bar-fill.target { background: var(--green); }
+    .strand-bar-pct { font-size: 12px; width: 34px; text-align: right; flex-shrink: 0; color: var(--text-muted); }
+    .strand-bar-pct.off { color: var(--yellow); }
+
+    /* ── Warnings ── */
+    .warn-box {
+      background: var(--warn-bg); border: 1px solid var(--warn-border);
+      border-radius: 6px; padding: 10px 14px; color: var(--warn-fg);
+      font-size: 13px; margin-bottom: 16px;
+    }
+
+    /* ── Weak spots ── */
+    .weak-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 680px) { .weak-grid { grid-template-columns: 1fr; } }
+    .weak-list { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .weak-list h3 { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.5px; }
+    .weak-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 7px 0; border-bottom: 1px solid var(--border-soft); font-size: 13px;
+    }
+    .weak-item:last-child { border-bottom: none; }
+    .weak-score { color: var(--red); font-weight: bold; font-size: 12px; }
+    .error-count { color: var(--text-muted); font-size: 12px; }
+
+    /* ── Calendar ── */
+    .cal-labels { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px; }
+    .cal-label { text-align: center; font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .cal-day {
+      aspect-ratio: 1; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; cursor: default;
+    }
+    .cal-day.empty      { background: transparent; }
+    .cal-day.no-session {
+      background: var(--cal-no-bg); border: 1px solid var(--cal-no-border); color: var(--cal-no-fg);
+    }
+    .cal-day.has-session {
+      background: var(--cal-sess-bg); color: var(--cal-sess-fg);
+      font-weight: bold; border: 1px solid var(--cal-sess-border);
+    }
+    .cal-day.today { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+    /* ── Queue Today ── */
+    .session-info {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      padding: 10px 16px; margin-bottom: 14px; font-size: 13px; color: var(--text-muted);
+    }
+    .queue-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 14px 16px; margin-bottom: 10px;
+    }
+    .queue-card-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+    .queue-meta { font-size: 12px; color: var(--text-muted); display: flex; gap: 16px; flex-wrap: wrap; }
+    .queue-mode { font-size: 10px; padding: 2px 7px; border-radius: 3px; text-transform: uppercase; font-weight: bold; }
+    .mode-blocking     { background: var(--mode-block-bg); color: var(--mode-block-fg); }
+    .mode-interleaving { background: var(--mode-inter-bg); color: var(--mode-inter-fg); }
+
+    /* ── No data ── */
+    .no-data {
+      text-align: center; color: var(--text-muted); padding: 24px;
+      background: var(--bg-card); border-radius: 8px; font-size: 14px;
+      border: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle light/dark">
+  <span id="themeIcon">☀</span> <span id="themeLabel">Light</span>
+</button>
+<div class="container">
+  <div id="root"><div class="no-data">Loading...</div></div>
+</div>
+<script>
+const DATA = __DATA__;
+
+// ── Theme ──────────────────────────────────────────────────────────────────
+const THEMES = { light: { icon: '☀', label: 'Light' }, dark: { icon: '☽', label: 'Dark' } };
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('themeIcon').textContent = THEMES[t].icon;
+  document.getElementById('themeLabel').textContent = THEMES[t].label;
+  localStorage.setItem('lt-theme', t);
+}
+function toggleTheme() {
+  applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+}
+applyTheme(localStorage.getItem('lt-theme') || 'light');
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function el(tag, cls, inner) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (inner !== undefined) e.innerHTML = inner;
+  return e;
+}
+
+// ── Render ─────────────────────────────────────────────────────────────────
+function render(d) {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+
+  const p          = d.profile          || {};
+  const mem        = d.memory           || {};
+  const comp       = d.competency       || {};
+  const outcomes   = d.outcomes         || {};
+  const sb         = d.strand_balance   || {};
+  const calEntries = d.practice_calendar || [];
+  const plan       = d.session_plan     || {};
+
+  // ── Header ──────────────────────────────────────────────────────────────
+  const header = el('div', 'header');
+  const genStr = d.generated_at ? new Date(d.generated_at).toLocaleString() : '';
+  header.innerHTML = `
+    <h1>Lang-Tutor &mdash; ${p.language || '?'}
+      <span class="level-badge">${p.level_cefr || '?'}</span>
+      <span style="color:var(--text-muted);font-size:15px"> &rarr; </span>
+      <span class="target-badge">${p.target_level || '?'}</span>
+    </h1>
+    <div class="header-meta">Goal: ${p.goal || '&mdash;'} &nbsp;&middot;&nbsp; Generated: ${genStr}</div>
+  `;
+  root.appendChild(header);
+
+  // ── At a Glance ─────────────────────────────────────────────────────────
+  const milestones    = outcomes.milestones || {};
+  const allTopics     = Object.values(milestones).flat();
+  const totalTopics   = allTopics.length || (comp.total_topics || 0);
+  const masteredCount = allTopics.filter(t => t.status === 'mastered').length || (comp.mastered_count || 0);
+  const learningCount = allTopics.filter(t => t.status === 'learning' || t.status === 'proficient').length;
+  const notStarted    = allTopics.filter(t => t.status === 'not_started').length;
+  const overdue       = mem.overdue_items || 0;
+  const streak        = mem.current_streak_days || 0;
+
+  const glance = el('div', 'section');
+  glance.appendChild(el('div', 'section-title', 'At a Glance'));
+  const stats = el('div', 'stats');
+  stats.innerHTML = `
+    <div class="stat-card"><div class="stat-number purple">${streak}</div><div class="stat-label">Day Streak</div></div>
+    <div class="stat-card"><div class="stat-number">${totalTopics}</div><div class="stat-label">Topics Total</div></div>
+    <div class="stat-card"><div class="stat-number green">${masteredCount}</div><div class="stat-label">Mastered</div></div>
+    <div class="stat-card"><div class="stat-number yellow">${learningCount}</div><div class="stat-label">In Progress</div></div>
+    <div class="stat-card"><div class="stat-number">${notStarted}</div><div class="stat-label">Not Started</div></div>
+    <div class="stat-card"><div class="stat-number ${overdue > 0 ? 'red' : ''}">${overdue}</div><div class="stat-label">Overdue Items</div></div>
+  `;
+  glance.appendChild(stats);
+  root.appendChild(glance);
+
+  // ── Roadmap ─────────────────────────────────────────────────────────────
+  const roadmapSec = el('div', 'section');
+  roadmapSec.appendChild(el('div', 'section-title', 'Roadmap'));
+  const mKeys = Object.keys(milestones).sort();
+  if (mKeys.length === 0) {
+    roadmapSec.appendChild(el('div', 'no-data', 'No topics in roadmap yet.'));
+  } else {
+    for (const m of mKeys) {
+      const mDiv = el('div', 'milestone');
+      mDiv.appendChild(el('div', 'milestone-title', m));
+      for (const t of milestones[m]) {
+        const s = t.status || 'not_started';
+        const pct = Math.round((t.mastery || 0) * 100);
+        const row = el('div', 'topic-row');
+        row.innerHTML = `
+          <span class="topic-title">${t.title}</span>
+          <span class="topic-badge badge-${s}">${s.replace('_', ' ')}</span>
+          <div class="topic-bar-wrap"><div class="topic-bar bar-${s}" style="width:${pct}%"></div></div>
+          <span class="topic-pct">${pct}%</span>
+        `;
+        mDiv.appendChild(row);
+      }
+      roadmapSec.appendChild(mDiv);
+    }
+  }
+  root.appendChild(roadmapSec);
+
+  // ── Four Strands ─────────────────────────────────────────────────────────
+  const TARGETS = { 'language-focused': 0.25, 'input': 0.30, 'output': 0.25, 'fluency': 0.20 };
+  const balance = sb.balance || {};
+  const strandSec = el('div', 'section');
+  strandSec.appendChild(el('div', 'section-title', 'Four Strands vs Targets'));
+  if (sb.warnings && sb.warnings.length > 0) {
+    strandSec.appendChild(el('div', 'warn-box', '&#9888; ' + sb.warnings.join('<br>&#9888; ')));
+  }
+  const sgrid = el('div', 'strand-grid');
+  for (const [strand, target] of Object.entries(TARGETS)) {
+    const actual = balance[strand] || 0;
+    const aPct = Math.round(actual * 100);
+    const tPct = Math.round(target * 100);
+    const isOff = Math.abs(actual - target) > 0.08;
+    const card = el('div', 'strand-card');
+    card.innerHTML = `
+      <div class="strand-name">${strand}</div>
+      <div class="strand-bar-row">
+        <div class="strand-bar-label">Actual</div>
+        <div class="strand-bar-wrap"><div class="strand-bar-fill actual" style="width:${Math.min(aPct,100)}%"></div></div>
+        <div class="strand-bar-pct ${isOff ? 'off' : ''}">${aPct}%</div>
+      </div>
+      <div class="strand-bar-row">
+        <div class="strand-bar-label">Target</div>
+        <div class="strand-bar-wrap"><div class="strand-bar-fill target" style="width:${Math.min(tPct,100)}%"></div></div>
+        <div class="strand-bar-pct">${tPct}%</div>
+      </div>
+    `;
+    sgrid.appendChild(card);
+  }
+  strandSec.appendChild(sgrid);
+  root.appendChild(strandSec);
+
+  // ── Weak Spots ───────────────────────────────────────────────────────────
+  const weakSec = el('div', 'section');
+  weakSec.appendChild(el('div', 'section-title', 'Weak Spots'));
+  const wgrid = el('div', 'weak-grid');
+
+  const wtList = el('div', 'weak-list');
+  wtList.appendChild(el('h3', null, 'Top Weak Topics'));
+  const weakTopics = comp.weak_topics || [];
+  if (weakTopics.length === 0) {
+    wtList.appendChild(el('div', null, `<span style="color:var(--text-muted);font-size:13px">No weak topics — great!</span>`));
+  } else {
+    for (const t of weakTopics.slice(0, 5)) {
+      const item = el('div', 'weak-item');
+      item.innerHTML = `<span>${t.title}</span><span class="weak-score">${Math.round((t.mastery_prob || 0) * 100)}%</span>`;
+      wtList.appendChild(item);
+    }
+  }
+  wgrid.appendChild(wtList);
+
+  const etList = el('div', 'weak-list');
+  etList.appendChild(el('h3', null, 'Top Error Types (30 days)'));
+  const errors = comp.error_clusters || [];
+  if (errors.length === 0) {
+    etList.appendChild(el('div', null, `<span style="color:var(--text-muted);font-size:13px">No errors recorded yet.</span>`));
+  } else {
+    for (const e of errors.slice(0, 5)) {
+      const item = el('div', 'weak-item');
+      item.innerHTML = `<span>${(e.error_type || 'unknown').replace(/_/g, ' ')}</span><span class="error-count">${e.count}&times;</span>`;
+      etList.appendChild(item);
+    }
+  }
+  wgrid.appendChild(etList);
+  weakSec.appendChild(wgrid);
+  root.appendChild(weakSec);
+
+  // ── Practice Calendar ────────────────────────────────────────────────────
+  const calSec = el('div', 'section');
+  calSec.appendChild(el('div', 'section-title', 'Practice Calendar (30 days)'));
+
+  const calMap = {};
+  for (const entry of calEntries) { calMap[entry.date] = entry; }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const days30 = [];
+  for (let i = 29; i >= 0; i--) {
+    const d2 = new Date(today);
+    d2.setDate(today.getDate() - i);
+    days30.push(d2);
+  }
+
+  const calLabels = el('div', 'cal-labels');
+  for (const lbl of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']) {
+    calLabels.appendChild(el('div', 'cal-label', lbl));
+  }
+  calSec.appendChild(calLabels);
+
+  const grid = el('div', 'calendar-grid');
+  const firstDow = (days30[0].getDay() + 6) % 7; // Mon = 0
+  for (let i = 0; i < firstDow; i++) {
+    grid.appendChild(el('div', 'cal-day empty'));
+  }
+  for (const d2 of days30) {
+    const dateStr = d2.toISOString().slice(0, 10);
+    const isToday = d2.getTime() === today.getTime();
+    const entry = calMap[dateStr];
+    const cls = 'cal-day ' + (entry ? 'has-session' : 'no-session') + (isToday ? ' today' : '');
+    const dayDiv = el('div', cls, String(d2.getDate()));
+    dayDiv.title = entry
+      ? `${dateStr}: ${entry.sessions} session(s), ${Math.round((entry.total_s || 0) / 60)} min`
+      : dateStr;
+    grid.appendChild(dayDiv);
+  }
+  calSec.appendChild(grid);
+  root.appendChild(calSec);
+
+  // ── Queue Today ──────────────────────────────────────────────────────────
+  const qSec = el('div', 'section');
+  qSec.appendChild(el('div', 'section-title', 'Queue Today'));
+  const planTopics = plan.topics || [];
+  if (planTopics.length === 0) {
+    qSec.appendChild(el('div', 'no-data', 'No session plan. Run /lang to start a session.'));
+  } else {
+    const info = el('div', 'session-info');
+    info.innerHTML = `Mode: <strong>${plan.mode || '&mdash;'}</strong> &nbsp;&middot;&nbsp; Budget: <strong>${plan.time_budget_minutes || 30} min</strong>`;
+    if (plan.strand_warning && plan.strand_warning.length > 0) {
+      info.innerHTML += `<br><span style="color:var(--yellow)">&#9888; ${plan.strand_warning.join(' &middot; ')}</span>`;
+    }
+    qSec.appendChild(info);
+    for (const t of planTopics) {
+      const card = el('div', 'queue-card');
+      const modeCls = t.mode === 'blocking' ? 'mode-blocking' : 'mode-interleaving';
+      const slots = (t.exercise_slots || []).map(s => `${s.strand} &times;${s.count}`).join(', ');
+      card.innerHTML = `
+        <div class="queue-card-title">
+          ${t.title}
+          <span class="queue-mode ${modeCls}">${t.mode || 'unknown'}</span>
+        </div>
+        <div class="queue-meta">
+          <span>Mastery: ${Math.round((t.mastery_prob || 0) * 100)}%</span>
+          ${slots ? `<span>Exercises: ${slots}</span>` : ''}
+        </div>
+      `;
+      qSec.appendChild(card);
+    }
+  }
+  root.appendChild(qSec);
+}
+
+render(DATA);
+</script>
+</body>
+</html>
